@@ -1,0 +1,3095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RACE//MONEY</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    color: white;
+    text-align: center;
+    background: radial-gradient(circle at top, #25252f, #0c0c10 72%);
+}
+
+header {
+    padding: 20px;
+    background: #17171d;
+    border-bottom: 2px solid #333;
+}
+
+h1 {
+    margin: 0;
+    color: #ffae42;
+    text-shadow: 0 0 18px #ff8500;
+}
+
+#money {
+    margin-top: 8px;
+    color: #69ff79;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.container {
+    width: min(920px, 94%);
+    margin: auto;
+    padding: 15px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+.difficulties {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 12px 0;
+}
+
+button {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 17px;
+    margin: 5px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform .12s, background .12s, box-shadow .12s;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: scale(.96);
+}
+
+.difficulties button {
+    background: #25252e;
+    color: white;
+}
+
+.difficulties button.selected {
+    background: #ff9418;
+    box-shadow: 0 0 13px #ff9418;
+}
+
+.track {
+    position: relative;
+    height: 240px;
+    margin: 20px 0;
+    overflow: hidden;
+    border: 5px solid #222;
+    border-radius: 20px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            #343434 0px,
+            #343434 45px,
+            #3c3c3c 45px,
+            #3c3c3c 90px
+        );
+}
+
+.track::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 5px;
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 25px,
+            #ddd 25px 55px
+        );
+    opacity: .5;
+}
+
+.finish {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 28px;
+    height: 100%;
+    z-index: 3;
+
+    background:
+        repeating-linear-gradient(
+            0deg,
+            white 0 15px,
+            black 15px 30px
+        );
+}
+
+.car {
+    position: absolute;
+    width: 65px;
+    height: 38px;
+    border-radius: 10px;
+    transition: left .12s linear;
+    z-index: 4;
+}
+
+.player {
+    top: 48px;
+    background: #ff4141;
+    box-shadow: 0 0 15px #ff4141;
+}
+
+.ai {
+    top: 145px;
+    background: #438cff;
+    box-shadow: 0 0 15px #438cff;
+}
+
+.player::after {
+    content: "🏎️";
+    position: absolute;
+    left: 8px;
+    top: -5px;
+    font-size: 36px;
+}
+
+.ai::after {
+    content: "🚗";
+    position: absolute;
+    left: 8px;
+    top: -5px;
+    font-size: 36px;
+}
+
+.status {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.stat {
+    padding: 13px;
+    border-radius: 12px;
+    border: 1px solid #333;
+    background: #1b1b23;
+}
+
+.stat strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 20px;
+}
+
+.nitroBox {
+    height: 10px;
+    margin-top: 7px;
+    overflow: hidden;
+    border-radius: 10px;
+    background: #333;
+}
+
+#nitroBar {
+    width: 100%;
+    height: 100%;
+    background: #19c7ff;
+    transition: width .2s;
+}
+
+#message {
+    min-height: 32px;
+    margin: 12px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+#driveBtn {
+    width: 90%;
+    max-width: 520px;
+    padding: 22px;
+    color: white;
+    background: #ff9418;
+    box-shadow: 0 0 20px #ff7200;
+    font-size: 22px;
+}
+
+#nitroBtn {
+    color: white;
+    background: #16bce9;
+}
+
+.garage,
+.settings {
+    margin-top: 25px;
+    padding: 18px;
+    border-radius: 16px;
+    border: 1px solid #30303a;
+    background: #17171e;
+}
+
+.upgradeGrid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+}
+
+.upgrade {
+    min-height: 100px;
+    margin: 0;
+    color: white;
+    background: #282832;
+}
+
+.upgrade:hover {
+    background: #383844;
+}
+
+.upgrade span {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 23px;
+}
+
+.upgrade small {
+    display: block;
+    margin-top: 5px;
+    color: #aaa;
+}
+
+.settingsRow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin: 13px 0;
+}
+
+.settings select {
+    max-width: 95%;
+    padding: 11px;
+    color: white;
+    border: 1px solid #444;
+    border-radius: 10px;
+    background: #282832;
+}
+
+.soundButton,
+.musicButton {
+    min-width: 80px;
+    color: white;
+    background: #282832;
+}
+
+.saveButton {
+    color: white;
+    background: #38b85a;
+}
+
+.resetButton {
+    color: white;
+    background: #c83b3b;
+}
+
+.raceInfo {
+    margin-top: 15px;
+    padding: 12px;
+    color: #aaa;
+    border-radius: 12px;
+    background: #191920;
+}
+
+#musicStatus {
+    color: #72d9ff;
+    font-weight: bold;
+}
+
+@media(max-width: 700px) {
+    .status {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .upgradeGrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🏁 RACE//MONEY</h1>
+    <div id="money">💰 $0</div>
+</header>
+
+<div class="container">
+
+    <h2 id="difficultyText"></h2>
+
+    <div class="difficulties">
+        <button id="easyBtn" onclick="setDifficulty('easy', this)" data-i18n="easy">EASY</button>
+        <button id="normalBtn" onclick="setDifficulty('normal', this)" data-i18n="normal">NORMAL</button>
+        <button id="hardBtn" onclick="setDifficulty('hard', this)" data-i18n="hard">HARD</button>
+        <button id="insaneBtn" onclick="setDifficulty('insane', this)" data-i18n="insane">INSANE</button>
+    </div>
+
+    <div class="track">
+        <div class="finish"></div>
+        <div id="playerCar" class="car player"></div>
+        <div id="aiCar" class="car ai"></div>
+    </div>
+
+    <div class="status">
+
+        <div class="stat">
+            🏎️ <span data-i18n="speed">Speed</span>
+            <strong id="speedText">10</strong>
+        </div>
+
+        <div class="stat">
+            🛞 <span data-i18n="grip">Grip</span>
+            <strong id="gripText">1</strong>
+        </div>
+
+        <div class="stat">
+            💨 <span data-i18n="acceleration">Acceleration</span>
+            <strong id="accelText">1</strong>
+        </div>
+
+        <div class="stat">
+            ⚡ <span data-i18n="nitro">Nitro</span>
+            <div class="nitroBox">
+                <div id="nitroBar"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="message"></div>
+
+    <button id="driveBtn" onclick="drive()" data-i18n="drive">
+        🏎️ PRESS TO DRIVE
+    </button>
+
+    <br>
+
+    <button id="nitroBtn" onclick="useNitro()" data-i18n="useNitro">
+        ⚡ USE NITRO
+    </button>
+
+    <div class="garage">
+
+        <h2>
+            🔧 <span data-i18n="garage">GARAGE</span>
+        </h2>
+
+        <div class="upgradeGrid">
+
+            <button class="upgrade" onclick="upgrade('engine')">
+                <span>🚀</span>
+                <span data-i18n="engine">Engine</span>
+                <small id="engineInfo">$100</small>
+            </button>
+
+            <button class="upgrade" onclick="upgrade('grip')">
+                <span>🛞</span>
+                <span data-i18n="grip">Grip</span>
+                <small id="gripInfo">$150</small>
+            </button>
+
+            <button class="upgrade" onclick="upgrade('nitro')">
+                <span>⚡</span>
+                <span data-i18n="nitroBoost">Nitro Boost</span>
+                <small id="nitroInfo">$200</small>
+            </button>
+
+            <button class="upgrade" onclick="upgrade('acceleration')">
+                <span>💨</span>
+                <span data-i18n="acceleration">Acceleration</span>
+                <small id="accelInfo">$175</small>
+            </button>
+
+            <button class="upgrade" onclick="upgrade('sponsor')">
+                <span>🪙</span>
+                <span data-i18n="sponsor">Sponsor</span>
+                <small id="sponsorInfo">$250</small>
+            </button>
+
+        </div>
+    </div>
+
+    <div class="settings">
+
+        <h2>
+            ⚙️ <span data-i18n="settings">SETTINGS</span>
+        </h2>
+
+        <div class="settingsRow">
+
+            <label for="language">
+                🌍 <span data-i18n="language">Language</span>:
+            </label>
+
+            <select id="language" onchange="changeLanguage(this.value)">
+
+                <option value="en">English</option>
+                <option value="uk">Українська</option>
+                <option value="es">Español</option>
+                <option value="fr">Français</option>
+                <option value="de">Deutsch</option>
+                <option value="it">Italiano</option>
+                <option value="pt">Português</option>
+                <option value="pl">Polski</option>
+                <option value="tr">Türkçe</option>
+                <option value="nl">Nederlands</option>
+                <option value="sv">Svenska</option>
+                <option value="no">Norsk</option>
+                <option value="fi">Suomi</option>
+                <option value="ja">日本語</option>
+                <option value="ko">한국어</option>
+                <option value="zh-cn">简体中文</option>
+                <option value="zh-tw">繁體中文</option>
+                <option value="vi">Tiếng Việt</option>
+                <option value="id">Bahasa Indonesia</option>
+
+            </select>
+        </div>
+
+        <div class="settingsRow">
+
+            <span>
+                🔊 <span data-i18n="sound">Sound</span>:
+            </span>
+
+            <button class="soundButton" onclick="changeVolume(-10)">
+                ➖
+            </button>
+
+            <strong id="soundText">100%</strong>
+
+            <button class="soundButton" onclick="changeVolume(10)">
+                ➕
+            </button>
+
+        </div>
+
+        <div class="settingsRow">
+
+            <span>
+                🎵 <span data-i18n="music">Music</span>:
+            </span>
+
+            <select id="musicSelect" onchange="changeMusic(this.value)">
+
+                <option value="off" data-i18n="musicOff">
+                    🔇 Off
+                </option>
+
+                <option value="casual" data-i18n="musicCasual">
+                    🌴 Casual
+                </option>
+
+                <option value="night" data-i18n="musicNight">
+                    🎻 Eine kleine Nachtmusik
+                </option>
+
+                <option value="joy" data-i18n="musicJoy">
+                    🎼 Ode to Joy
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="settingsRow">
+
+            <span data-i18n="nowPlaying">
+                Now playing:
+            </span>
+
+            <span id="musicStatus">
+                Off
+            </span>
+
+        </div>
+
+        <div class="settingsRow">
+
+            <button class="saveButton" onclick="manualSave()">
+                💾 <span data-i18n="save">SAVE PROGRESS</span>
+            </button>
+
+            <button class="resetButton" onclick="resetProgress()">
+                🗑️ <span data-i18n="reset">RESET PROGRESS</span>
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="raceInfo">
+
+        🏁 <span data-i18n="raceInfo1">
+            First to 100% wins.
+        </span>
+
+        <br>
+
+        🤖 <span data-i18n="raceInfo2">
+            The AI drives automatically.
+        </span>
+
+        <br>
+
+        ⚡ <span data-i18n="raceInfo3">
+            Nitro gives you a temporary burst.
+        </span>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   RACE//MONEY
+   ========================================================= */
+
+
+/* =========================================================
+   TRANSLATIONS
+   ========================================================= */
+
+const translations = {
+
+en: {
+    speed:"Speed",
+    grip:"Grip",
+    acceleration:"Acceleration",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Engine",
+    nitroBoost:"Nitro Boost",
+    sponsor:"Sponsor",
+    settings:"SETTINGS",
+    language:"Language",
+    sound:"Sound",
+    music:"Music",
+    nowPlaying:"Now playing:",
+    save:"SAVE PROGRESS",
+    reset:"RESET PROGRESS",
+
+    raceInfo1:"First to 100% wins.",
+    raceInfo2:"The AI drives automatically.",
+    raceInfo3:"Nitro gives you a temporary burst.",
+
+    drive:"🏎️ PRESS TO DRIVE",
+    useNitro:"⚡ USE NITRO",
+
+    difficulty:"Difficulty",
+    easy:"EASY",
+    normal:"NORMAL",
+    hard:"HARD",
+    insane:"INSANE",
+
+    choose:"Choose a difficulty and press DRIVE!",
+    go:"🏁 GO!",
+
+    saved:"💾 Progress saved!",
+    resetMsg:"🗑️ Progress completely reset!",
+    startFirst:"🏁 Start the race first!",
+    noNitro:"💨 Not enough nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 YOU WON!",
+    lost:"💀 THE AI WON!",
+    needMoney:"💸 You need $",
+    upgraded:"upgraded!",
+
+    musicOff:"🔇 Off",
+    musicCasual:"🌴 Casual",
+    musicNight:"🎻 Eine kleine Nachtmusik",
+    musicJoy:"🎼 Ode to Joy"
+},
+
+uk: {
+    speed:"Швидкість",
+    grip:"Зчеплення",
+    acceleration:"Прискорення",
+    nitro:"Нітро",
+    garage:"ГАРАЖ",
+    engine:"Двигун",
+    nitroBoost:"Нітро-підсилювач",
+    sponsor:"Спонсор",
+    settings:"НАЛАШТУВАННЯ",
+    language:"Мова",
+    sound:"Звук",
+    music:"Музика",
+    nowPlaying:"Зараз грає:",
+    save:"ЗБЕРЕГТИ ПРОГРЕС",
+    reset:"СКИНУТИ ПРОГРЕС",
+
+    raceInfo1:"Перший до 100% перемагає.",
+    raceInfo2:"ШІ їде автоматично.",
+    raceInfo3:"Нітро дає тимчасове прискорення.",
+
+    drive:"🏎️ ЇХАТИ",
+    useNitro:"⚡ ВИКОРИСТАТИ НІТРО",
+
+    difficulty:"Складність",
+    easy:"ЛЕГКО",
+    normal:"НОРМАЛЬНО",
+    hard:"ВАЖКО",
+    insane:"БОЖЕВІЛЬНО",
+
+    choose:"Обери складність і натисни ЇХАТИ!",
+    go:"🏁 ПОЇХАЛИ!",
+
+    saved:"💾 Прогрес збережено!",
+    resetMsg:"🗑️ Прогрес повністю скинуто!",
+    startFirst:"🏁 Спочатку почни гонку!",
+    noNitro:"💨 Недостатньо нітро!",
+    nitroMsg:"⚡ НІТРО!",
+    won:"🏆 ТИ ПЕРЕМІГ!",
+    lost:"💀 ШІ ПЕРЕМІГ!",
+    needMoney:"💸 Потрібно ще $",
+    upgraded:"покращено!",
+
+    musicOff:"🔇 Вимкнено",
+    musicCasual:"🌴 Спокійна",
+    musicNight:"🎻 Маленька нічна серенада",
+    musicJoy:"🎼 Ода до радості"
+},
+
+es: {
+    speed:"Velocidad",
+    grip:"Agarre",
+    acceleration:"Aceleración",
+    nitro:"Nitro",
+    garage:"GARAJE",
+    engine:"Motor",
+    nitroBoost:"Turbo Nitro",
+    sponsor:"Patrocinador",
+    settings:"AJUSTES",
+    language:"Idioma",
+    sound:"Sonido",
+    music:"Música",
+    nowPlaying:"Reproduciendo:",
+    save:"GUARDAR PROGRESO",
+    reset:"REINICIAR PROGRESO",
+
+    raceInfo1:"El primero en llegar al 100% gana.",
+    raceInfo2:"La IA conduce automáticamente.",
+    raceInfo3:"El nitro da un impulso temporal.",
+
+    drive:"🏎️ CONDUCIR",
+    useNitro:"⚡ USAR NITRO",
+
+    difficulty:"Dificultad",
+    easy:"FÁCIL",
+    normal:"NORMAL",
+    hard:"DIFÍCIL",
+    insane:"DEMENTE",
+
+    choose:"¡Elige dificultad y conduce!",
+    go:"🏁 ¡YA!",
+
+    saved:"💾 ¡Progreso guardado!",
+    resetMsg:"🗑️ ¡Progreso reiniciado!",
+    startFirst:"🏁 ¡Empieza la carrera primero!",
+    noNitro:"💨 ¡No hay suficiente nitro!",
+    nitroMsg:"⚡ ¡NITRO!",
+    won:"🏆 ¡GANASTE!",
+    lost:"💀 ¡GANÓ LA IA!",
+    needMoney:"💸 Necesitas $",
+    upgraded:"¡mejorado!",
+
+    musicOff:"🔇 Apagado",
+    musicCasual:"🌴 Casual",
+    musicNight:"🎻 Pequeña serenata nocturna",
+    musicJoy:"🎼 Oda a la alegría"
+},
+
+fr: {
+    speed:"Vitesse",
+    grip:"Adhérence",
+    acceleration:"Accélération",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Moteur",
+    nitroBoost:"Boost Nitro",
+    sponsor:"Sponsor",
+    settings:"PARAMÈTRES",
+    language:"Langue",
+    sound:"Son",
+    music:"Musique",
+    nowPlaying:"Lecture :",
+    save:"SAUVEGARDER",
+    reset:"RÉINITIALISER",
+
+    raceInfo1:"Le premier à 100% gagne.",
+    raceInfo2:"L'IA conduit automatiquement.",
+    raceInfo3:"Le nitro donne une accélération temporaire.",
+
+    drive:"🏎️ CONDUIRE",
+    useNitro:"⚡ UTILISER LE NITRO",
+
+    difficulty:"Difficulté",
+    easy:"FACILE",
+    normal:"NORMAL",
+    hard:"DIFFICILE",
+    insane:"EXTRÊME",
+
+    choose:"Choisis une difficulté et conduis !",
+    go:"🏁 GO !",
+
+    saved:"💾 Progression sauvegardée !",
+    resetMsg:"🗑️ Progression réinitialisée !",
+    startFirst:"🏁 Commence d'abord la course !",
+    noNitro:"💨 Pas assez de nitro !",
+    nitroMsg:"⚡ NITRO !",
+    won:"🏆 TU AS GAGNÉ !",
+    lost:"💀 L'IA A GAGNÉ !",
+    needMoney:"💸 Il te faut encore $",
+    upgraded:"amélioré !",
+
+    musicOff:"🔇 Désactivée",
+    musicCasual:"🌴 Détente",
+    musicNight:"🎻 Petite musique de nuit",
+    musicJoy:"🎼 Ode à la joie"
+},
+
+de: {
+    speed:"Geschwindigkeit",
+    grip:"Grip",
+    acceleration:"Beschleunigung",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Motor",
+    nitroBoost:"Nitro-Boost",
+    sponsor:"Sponsor",
+    settings:"EINSTELLUNGEN",
+    language:"Sprache",
+    sound:"Ton",
+    music:"Musik",
+    nowPlaying:"Jetzt läuft:",
+    save:"SPEICHERN",
+    reset:"FORTSCHRITT ZURÜCKSETZEN",
+
+    raceInfo1:"Wer zuerst 100% erreicht, gewinnt.",
+    raceInfo2:"Die KI fährt automatisch.",
+    raceInfo3:"Nitro gibt einen temporären Schub.",
+
+    drive:"🏎️ FAHREN",
+    useNitro:"⚡ NITRO",
+
+    difficulty:"Schwierigkeit",
+    easy:"LEICHT",
+    normal:"NORMAL",
+    hard:"SCHWER",
+    insane:"WAHNSINN",
+
+    choose:"Wähle eine Schwierigkeit und fahre!",
+    go:"🏁 LOS!",
+
+    saved:"💾 Fortschritt gespeichert!",
+    resetMsg:"🗑️ Fortschritt zurückgesetzt!",
+    startFirst:"🏁 Starte zuerst das Rennen!",
+    noNitro:"💨 Nicht genug Nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 DU HAST GEWONNEN!",
+    lost:"💀 DIE KI GEWINNT!",
+    needMoney:"💸 Du brauchst noch $",
+    upgraded:"verbessert!",
+
+    musicOff:"🔇 Aus",
+    musicCasual:"🌴 Entspannt",
+    musicNight:"🎻 Kleine Nachtmusik",
+    musicJoy:"🎼 An die Freude"
+},
+
+it: {
+    speed:"Velocità",
+    grip:"Aderenza",
+    acceleration:"Accelerazione",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Motore",
+    nitroBoost:"Boost Nitro",
+    sponsor:"Sponsor",
+    settings:"IMPOSTAZIONI",
+    language:"Lingua",
+    sound:"Suono",
+    music:"Musica",
+    nowPlaying:"In riproduzione:",
+    save:"SALVA PROGRESSI",
+    reset:"RESET PROGRESSI",
+
+    raceInfo1:"Il primo al 100% vince.",
+    raceInfo2:"L'IA guida automaticamente.",
+    raceInfo3:"Il nitro dà una spinta temporanea.",
+
+    drive:"🏎️ GUIDA",
+    useNitro:"⚡ USA NITRO",
+
+    difficulty:"Difficoltà",
+    easy:"FACILE",
+    normal:"NORMALE",
+    hard:"DIFFICILE",
+    insane:"FOLLE",
+
+    choose:"Scegli la difficoltà e guida!",
+    go:"🏁 VIA!",
+
+    saved:"💾 Progressi salvati!",
+    resetMsg:"🗑️ Progressi resettati!",
+    startFirst:"🏁 Inizia prima la gara!",
+    noNitro:"💨 Nitro insufficiente!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 HAI VINTO!",
+    lost:"💀 HA VINTO L'IA!",
+    needMoney:"💸 Ti servono altri $",
+    upgraded:"migliorato!",
+
+    musicOff:"🔇 Spenta",
+    musicCasual:"🌴 Rilassata",
+    musicNight:"🎻 Piccola serenata notturna",
+    musicJoy:"🎼 Inno alla gioia"
+},
+
+pt: {
+    speed:"Velocidade",
+    grip:"Aderência",
+    acceleration:"Aceleração",
+    nitro:"Nitro",
+    garage:"GARAGEM",
+    engine:"Motor",
+    nitroBoost:"Impulso Nitro",
+    sponsor:"Patrocinador",
+    settings:"CONFIGURAÇÕES",
+    language:"Idioma",
+    sound:"Som",
+    music:"Música",
+    nowPlaying:"Tocando:",
+    save:"SALVAR PROGRESSO",
+    reset:"RESETAR PROGRESSO",
+
+    raceInfo1:"O primeiro a chegar a 100% vence.",
+    raceInfo2:"A IA dirige automaticamente.",
+    raceInfo3:"O nitro dá um impulso temporário.",
+
+    drive:"🏎️ DIRIGIR",
+    useNitro:"⚡ USAR NITRO",
+
+    difficulty:"Dificuldade",
+    easy:"FÁCIL",
+    normal:"NORMAL",
+    hard:"DIFÍCIL",
+    insane:"INSANO",
+
+    choose:"Escolha a dificuldade e dirija!",
+    go:"🏁 VAI!",
+
+    saved:"💾 Progresso salvo!",
+    resetMsg:"🗑️ Progresso resetado!",
+    startFirst:"🏁 Comece a corrida primeiro!",
+    noNitro:"💨 Nitro insuficiente!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 VOCÊ VENCEU!",
+    lost:"💀 A IA VENCEU!",
+    needMoney:"💸 Você precisa de mais $",
+    upgraded:"melhorado!",
+
+    musicOff:"🔇 Desligada",
+    musicCasual:"🌴 Casual",
+    musicNight:"🎻 Pequena Serenata Noturna",
+    musicJoy:"🎼 Ode à Alegria"
+},
+
+pl: {
+    speed:"Prędkość",
+    grip:"Przyczepność",
+    acceleration:"Przyspieszenie",
+    nitro:"Nitro",
+    garage:"GARAŻ",
+    engine:"Silnik",
+    nitroBoost:"Nitro Boost",
+    sponsor:"Sponsor",
+    settings:"USTAWIENIA",
+    language:"Język",
+    sound:"Dźwięk",
+    music:"Muzyka",
+    nowPlaying:"Teraz gra:",
+    save:"ZAPISZ POSTĘP",
+    reset:"RESETUJ POSTĘP",
+
+    raceInfo1:"Pierwszy do 100% wygrywa.",
+    raceInfo2:"AI prowadzi automatycznie.",
+    raceInfo3:"Nitro daje chwilowe przyspieszenie.",
+
+    drive:"🏎️ JEDŹ",
+    useNitro:"⚡ UŻYJ NITRO",
+
+    difficulty:"Poziom trudności",
+    easy:"ŁATWY",
+    normal:"NORMALNY",
+    hard:"TRUDNY",
+    insane:"SZALONY",
+
+    choose:"Wybierz poziom i jedź!",
+    go:"🏁 START!",
+
+    saved:"💾 Postęp zapisany!",
+    resetMsg:"🗑️ Postęp zresetowany!",
+    startFirst:"🏁 Najpierw rozpocznij wyścig!",
+    noNitro:"💨 Za mało nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 WYGRAŁEŚ!",
+    lost:"💀 AI WYGRAŁO!",
+    needMoney:"💸 Potrzebujesz jeszcze $",
+    upgraded:"ulepszono!",
+
+    musicOff:"🔇 Wyłączona",
+    musicCasual:"🌴 Spokojna",
+    musicNight:"🎻 Mała serenada nocna",
+    musicJoy:"🎼 Oda do radości"
+},
+
+tr: {
+    speed:"Hız",
+    grip:"Yol Tutuşu",
+    acceleration:"Hızlanma",
+    nitro:"Nitro",
+    garage:"GARAJ",
+    engine:"Motor",
+    nitroBoost:"Nitro Takviyesi",
+    sponsor:"Sponsor",
+    settings:"AYARLAR",
+    language:"Dil",
+    sound:"Ses",
+    music:"Müzik",
+    nowPlaying:"Şimdi çalıyor:",
+    save:"İLERLEMEYİ KAYDET",
+    reset:"İLERLEMEYİ SIFIRLA",
+
+    raceInfo1:"%100'e ilk ulaşan kazanır.",
+    raceInfo2:"Yapay zekâ otomatik sürer.",
+    raceInfo3:"Nitro geçici hız artışı sağlar.",
+
+    drive:"🏎️ SÜR",
+    useNitro:"⚡ NİTRO KULLAN",
+
+    difficulty:"Zorluk",
+    easy:"KOLAY",
+    normal:"NORMAL",
+    hard:"ZOR",
+    insane:"ÇILGIN",
+
+    choose:"Zorluğu seç ve sür!",
+    go:"🏁 BAŞLA!",
+
+    saved:"💾 İlerleme kaydedildi!",
+    resetMsg:"🗑️ İlerleme sıfırlandı!",
+    startFirst:"🏁 Önce yarışı başlat!",
+    noNitro:"💨 Yeterli nitro yok!",
+    nitroMsg:"⚡ NİTRO!",
+    won:"🏆 KAZANDIN!",
+    lost:"💀 YAPAY ZEKÂ KAZANDI!",
+    needMoney:"💸 $ kadar daha gerekiyor: ",
+    upgraded:"yükseltildi!",
+
+    musicOff:"🔇 Kapalı",
+    musicCasual:"🌴 Rahat",
+    musicNight:"🎻 Küçük Gece Müziği",
+    musicJoy:"🎼 Neşeye Övgü"
+},
+
+nl: {
+    speed:"Snelheid",
+    grip:"Grip",
+    acceleration:"Acceleratie",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Motor",
+    nitroBoost:"Nitro Boost",
+    sponsor:"Sponsor",
+    settings:"INSTELLINGEN",
+    language:"Taal",
+    sound:"Geluid",
+    music:"Muziek",
+    nowPlaying:"Nu speelt:",
+    save:"VOORTGANG OPSLAAN",
+    reset:"VOORTGANG RESETTEN",
+
+    raceInfo1:"De eerste bij 100% wint.",
+    raceInfo2:"De AI rijdt automatisch.",
+    raceInfo3:"Nitro geeft tijdelijk extra snelheid.",
+
+    drive:"🏎️ RIJDEN",
+    useNitro:"⚡ NITRO GEBRUIKEN",
+
+    difficulty:"Moeilijkheid",
+    easy:"MAKKELIJK",
+    normal:"NORMAAL",
+    hard:"MOEILIJK",
+    insane:"GEK",
+
+    choose:"Kies een moeilijkheid en rij!",
+    go:"🏁 GA!",
+
+    saved:"💾 Voortgang opgeslagen!",
+    resetMsg:"🗑️ Voortgang gereset!",
+    startFirst:"🏁 Start eerst de race!",
+    noNitro:"💨 Niet genoeg nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 JE HEBT GEWONNEN!",
+    lost:"💀 DE AI HEEFT GEWONNEN!",
+    needMoney:"💸 Je hebt nog $ nodig",
+    upgraded:"geüpgraded!",
+
+    musicOff:"🔇 Uit",
+    musicCasual:"🌴 Relaxed",
+    musicNight:"🎻 Kleine Nachtmuziek",
+    musicJoy:"🎼 Ode aan de Vreugde"
+},
+
+sv: {
+    speed:"Hastighet",
+    grip:"Grepp",
+    acceleration:"Acceleration",
+    nitro:"Nitro",
+    garage:"GARAGE",
+    engine:"Motor",
+    nitroBoost:"Nitroboost",
+    sponsor:"Sponsor",
+    settings:"INSTÄLLNINGAR",
+    language:"Språk",
+    sound:"Ljud",
+    music:"Musik",
+    nowPlaying:"Spelas nu:",
+    save:"SPARA FRAMSTEG",
+    reset:"ÅTERSTÄLL FRAMSTEG",
+
+    raceInfo1:"Den första till 100% vinner.",
+    raceInfo2:"AI:n kör automatiskt.",
+    raceInfo3:"Nitro ger en tillfällig fartökning.",
+
+    drive:"🏎️ KÖR",
+    useNitro:"⚡ ANVÄND NITRO",
+
+    difficulty:"Svårighetsgrad",
+    easy:"LÄTT",
+    normal:"NORMAL",
+    hard:"SVÅR",
+    insane:"GALEN",
+
+    choose:"Välj svårighetsgrad och kör!",
+    go:"🏁 KÖR!",
+
+    saved:"💾 Framsteg sparat!",
+    resetMsg:"🗑️ Framsteg återställt!",
+    startFirst:"🏁 Starta loppet först!",
+    noNitro:"💨 Inte tillräckligt med nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 DU VANN!",
+    lost:"💀 AI:N VANN!",
+    needMoney:"💸 Du behöver $",
+    upgraded:"uppgraderad!",
+
+    musicOff:"🔇 Av",
+    musicCasual:"🌴 Avslappnad",
+    musicNight:"🎻 En liten nattmusik",
+    musicJoy:"🎼 Ode till glädjen"
+},
+
+no: {
+    speed:"Fart",
+    grip:"Veigrep",
+    acceleration:"Akselerasjon",
+    nitro:"Nitro",
+    garage:"GARASJE",
+    engine:"Motor",
+    nitroBoost:"Nitroboost",
+    sponsor:"Sponsor",
+    settings:"INNSTILLINGER",
+    language:"Språk",
+    sound:"Lyd",
+    music:"Musikk",
+    nowPlaying:"Spilles nå:",
+    save:"LAGRE FREMGANG",
+    reset:"TILBAKESTILL FREMGANG",
+
+    raceInfo1:"Den første til 100% vinner.",
+    raceInfo2:"AI-en kjører automatisk.",
+    raceInfo3:"Nitro gir et midlertidig fartsløft.",
+
+    drive:"🏎️ KJØR",
+    useNitro:"⚡ BRUK NITRO",
+
+    difficulty:"Vanskelighetsgrad",
+    easy:"LETT",
+    normal:"NORMAL",
+    hard:"VANSKELIG",
+    insane:"GAL",
+
+    choose:"Velg vanskelighetsgrad og kjør!",
+    go:"🏁 KJØR!",
+
+    saved:"💾 Fremgang lagret!",
+    resetMsg:"🗑️ Fremgang tilbakestilt!",
+    startFirst:"🏁 Start løpet først!",
+    noNitro:"💨 Ikke nok nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 DU VANT!",
+    lost:"💀 AI-EN VANT!",
+    needMoney:"💸 Du trenger $",
+    upgraded:"oppgradert!",
+
+    musicOff:"🔇 Av",
+    musicCasual:"🌴 Avslappet",
+    musicNight:"🎻 En liten nattmusikk",
+    musicJoy:"🎼 Ode til gleden"
+},
+
+fi: {
+    speed:"Nopeus",
+    grip:"Pito",
+    acceleration:"Kiihtyvyys",
+    nitro:"Nitro",
+    garage:"AUTOTALLI",
+    engine:"Moottori",
+    nitroBoost:"Nitro-tehostus",
+    sponsor:"Sponsori",
+    settings:"ASETUKSET",
+    language:"Kieli",
+    sound:"Ääni",
+    music:"Musiikki",
+    nowPlaying:"Nyt soi:",
+    save:"TALLENNA EDISTYMINEN",
+    reset:"NOLLAA EDISTYMINEN",
+
+    raceInfo1:"Ensimmäinen 100 %:iin voittaa.",
+    raceInfo2:"Tekoäly ajaa automaattisesti.",
+    raceInfo3:"Nitro antaa väliaikaisen nopeusboostin.",
+
+    drive:"🏎️ AJA",
+    useNitro:"⚡ KÄYTÄ NITROA",
+
+    difficulty:"Vaikeusaste",
+    easy:"HELppo".toUpperCase(),
+    normal:"NORMAALI",
+    hard:"VAIKEA",
+    insane:"HULLU",
+
+    choose:"Valitse vaikeusaste ja aja!",
+    go:"🏁 MENNÄÄN!",
+
+    saved:"💾 Edistyminen tallennettu!",
+    resetMsg:"🗑️ Edistyminen nollattu!",
+    startFirst:"🏁 Aloita kilpailu ensin!",
+    noNitro:"💨 Nitroa ei ole tarpeeksi!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 VOITIT!",
+    lost:"💀 TEKOÄLY VOITTI!",
+    needMoney:"💸 Tarvitset vielä $",
+    upgraded:"päivitetty!",
+
+    musicOff:"🔇 Pois",
+    musicCasual:"🌴 Rentouttava",
+    musicNight:"🎻 Pieni yöserenadi",
+    musicJoy:"🎼 Oodi ilolle"
+},
+
+ja: {
+    speed:"スピード",
+    grip:"グリップ",
+    acceleration:"加速",
+    nitro:"ニトロ",
+    garage:"ガレージ",
+    engine:"エンジン",
+    nitroBoost:"ニトロブースト",
+    sponsor:"スポンサー",
+    settings:"設定",
+    language:"言語",
+    sound:"サウンド",
+    music:"音楽",
+    nowPlaying:"再生中:",
+    save:"進行状況を保存",
+    reset:"進行状況をリセット",
+
+    raceInfo1:"100%に先に到達した方が勝ち。",
+    raceInfo2:"AIは自動で走ります。",
+    raceInfo3:"ニトロで一時的に加速します。",
+
+    drive:"🏎️ ドライブ",
+    useNitro:"⚡ ニトロを使う",
+
+    difficulty:"難易度",
+    easy:"イージー",
+    normal:"ノーマル",
+    hard:"ハード",
+    insane:"インセイン",
+
+    choose:"難易度を選んでドライブ！",
+    go:"🏁 スタート！",
+
+    saved:"💾 保存しました！",
+    resetMsg:"🗑️ リセットしました！",
+    startFirst:"🏁 まずレースを開始してください！",
+    noNitro:"💨 ニトロが足りません！",
+    nitroMsg:"⚡ ニトロ！",
+    won:"🏆 勝利！",
+    lost:"💀 AIの勝利！",
+    needMoney:"💸 あと $ 必要です",
+    upgraded:"アップグレードしました！",
+
+    musicOff:"🔇 オフ",
+    musicCasual:"🌴 カジュアル",
+    musicNight:"🎻 小さな夜の曲",
+    musicJoy:"🎼 歓喜の歌"
+},
+
+ko: {
+    speed:"속도",
+    grip:"그립",
+    acceleration:"가속",
+    nitro:"니트로",
+    garage:"차고",
+    engine:"엔진",
+    nitroBoost:"니트로 부스트",
+    sponsor:"스폰서",
+    settings:"설정",
+    language:"언어",
+    sound:"소리",
+    music:"음악",
+    nowPlaying:"재생 중:",
+    save:"진행 저장",
+    reset:"진행 초기화",
+
+    raceInfo1:"100%에 먼저 도착하면 승리합니다.",
+    raceInfo2:"AI가 자동으로 운전합니다.",
+    raceInfo3:"니트로는 잠시 속도를 높입니다.",
+
+    drive:"🏎️ 운전",
+    useNitro:"⚡ 니트로 사용",
+
+    difficulty:"난이도",
+    easy:"쉬움",
+    normal:"보통",
+    hard:"어려움",
+    insane:"광기",
+
+    choose:"난이도를 선택하고 운전하세요!",
+    go:"🏁 출발!",
+
+    saved:"💾 저장되었습니다!",
+    resetMsg:"🗑️ 진행이 초기화되었습니다!",
+    startFirst:"🏁 먼저 레이스를 시작하세요!",
+    noNitro:"💨 니트로가 부족합니다!",
+    nitroMsg:"⚡ 니트로!",
+    won:"🏆 승리!",
+    lost:"💀 AI 승리!",
+    needMoney:"💸 추가로 $가 필요합니다",
+    upgraded:"업그레이드 완료!",
+
+    musicOff:"🔇 끄기",
+    musicCasual:"🌴 편안한 음악",
+    musicNight:"🎻 작은 밤의 음악",
+    musicJoy:"🎼 환희의 송가"
+},
+
+zhcn: {
+    speed:"速度",
+    grip:"抓地力",
+    acceleration:"加速",
+    nitro:"氮气",
+    garage:"车库",
+    engine:"引擎",
+    nitroBoost:"氮气强化",
+    sponsor:"赞助商",
+    settings:"设置",
+    language:"语言",
+    sound:"音效",
+    music:"音乐",
+    nowPlaying:"正在播放:",
+    save:"保存进度",
+    reset:"重置进度",
+
+    raceInfo1:"第一个到达100%的人获胜。",
+    raceInfo2:"AI会自动驾驶。",
+    raceInfo3:"氮气可以暂时加速。",
+
+    drive:"🏎️ 驾驶",
+    useNitro:"⚡ 使用氮气",
+
+    difficulty:"难度",
+    easy:"简单",
+    normal:"普通",
+    hard:"困难",
+    insane:"疯狂",
+
+    choose:"选择难度并开始驾驶！",
+    go:"🏁 出发！",
+
+    saved:"💾 进度已保存！",
+    resetMsg:"🗑️ 进度已重置！",
+    startFirst:"🏁 请先开始比赛！",
+    noNitro:"💨 氮气不足！",
+    nitroMsg:"⚡ 氮气！",
+    won:"🏆 你赢了！",
+    lost:"💀 AI赢了！",
+    needMoney:"💸 还需要 $",
+    upgraded:"升级成功！",
+
+    musicOff:"🔇 关闭",
+    musicCasual:"🌴 休闲",
+    musicNight:"🎻 小夜曲",
+    musicJoy:"🎼 欢乐颂"
+},
+
+zhTW: {
+    speed:"速度",
+    grip:"抓地力",
+    acceleration:"加速",
+    nitro:"氮氣",
+    garage:"車庫",
+    engine:"引擎",
+    nitroBoost:"氮氣強化",
+    sponsor:"贊助商",
+    settings:"設定",
+    language:"語言",
+    sound:"音效",
+    music:"音樂",
+    nowPlaying:"正在播放:",
+    save:"儲存進度",
+    reset:"重設進度",
+
+    raceInfo1:"第一個到達100%的人獲勝。",
+    raceInfo2:"AI會自動駕駛。",
+    raceInfo3:"氮氣可以暫時加速。",
+
+    drive:"🏎️ 駕駛",
+    useNitro:"⚡ 使用氮氣",
+
+    difficulty:"難度",
+    easy:"簡單",
+    normal:"普通",
+    hard:"困難",
+    insane:"瘋狂",
+
+    choose:"選擇難度並開始駕駛！",
+    go:"🏁 出發！",
+
+    saved:"💾 進度已儲存！",
+    resetMsg:"🗑️ 進度已重設！",
+    startFirst:"🏁 請先開始比賽！",
+    noNitro:"💨 氮氣不足！",
+    nitroMsg:"⚡ 氮氣！",
+    won:"🏆 你贏了！",
+    lost:"💀 AI贏了！",
+    needMoney:"💸 還需要 $",
+    upgraded:"升級成功！",
+
+    musicOff:"🔇 關閉",
+    musicCasual:"🌴 休閒",
+    musicNight:"🎻 小夜曲",
+    musicJoy:"🎼 歡樂頌"
+},
+
+vi: {
+    speed:"Tốc độ",
+    grip:"Độ bám",
+    acceleration:"Tăng tốc",
+    nitro:"Nitro",
+    garage:"GARA",
+    engine:"Động cơ",
+    nitroBoost:"Tăng Nitro",
+    sponsor:"Nhà tài trợ",
+    settings:"CÀI ĐẶT",
+    language:"Ngôn ngữ",
+    sound:"Âm thanh",
+    music:"Nhạc",
+    nowPlaying:"Đang phát:",
+    save:"LƯU TIẾN TRÌNH",
+    reset:"ĐẶT LẠI TIẾN TRÌNH",
+
+    raceInfo1:"Ai đạt 100% trước sẽ thắng.",
+    raceInfo2:"AI tự lái.",
+    raceInfo3:"Nitro giúp tăng tốc tạm thời.",
+
+    drive:"🏎️ LÁI",
+    useNitro:"⚡ DÙNG NITRO",
+
+    difficulty:"Độ khó",
+    easy:"DỄ",
+    normal:"BÌNH THƯỜNG",
+    hard:"KHÓ",
+    insane:"ĐIÊN",
+
+    choose:"Chọn độ khó và lái!",
+    go:"🏁 BẮT ĐẦU!",
+
+    saved:"💾 Đã lưu!",
+    resetMsg:"🗑️ Đã đặt lại!",
+    startFirst:"🏁 Hãy bắt đầu cuộc đua trước!",
+    noNitro:"💨 Không đủ nitro!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 BẠN THẮNG!",
+    lost:"💀 AI THẮNG!",
+    needMoney:"💸 Bạn cần thêm $",
+    upgraded:"đã nâng cấp!",
+
+    musicOff:"🔇 Tắt",
+    musicCasual:"🌴 Thư giãn",
+    musicNight:"🎻 Dạ khúc",
+    musicJoy:"🎼 Khúc ca vui mừng"
+},
+
+id: {
+    speed:"Kecepatan",
+    grip:"Cengkeraman",
+    acceleration:"Akselerasi",
+    nitro:"Nitro",
+    garage:"GARASI",
+    engine:"Mesin",
+    nitroBoost:"Boost Nitro",
+    sponsor:"Sponsor",
+    settings:"PENGATURAN",
+    language:"Bahasa",
+    sound:"Suara",
+    music:"Musik",
+    nowPlaying:"Sedang diputar:",
+    save:"SIMPAN PROGRES",
+    reset:"RESET PROGRES",
+
+    raceInfo1:"Yang pertama mencapai 100% menang.",
+    raceInfo2:"AI mengemudi otomatis.",
+    raceInfo3:"Nitro memberi dorongan sementara.",
+
+    drive:"🏎️ MULAI",
+    useNitro:"⚡ GUNAKAN NITRO",
+
+    difficulty:"Kesulitan",
+    easy:"MUDAH",
+    normal:"NORMAL",
+    hard:"SULIT",
+    insane:"GILA",
+
+    choose:"Pilih kesulitan dan mulai!",
+    go:"🏁 MULAI!",
+
+    saved:"💾 Progres disimpan!",
+    resetMsg:"🗑️ Progres direset!",
+    startFirst:"🏁 Mulai balapan dulu!",
+    noNitro:"💨 Nitro tidak cukup!",
+    nitroMsg:"⚡ NITRO!",
+    won:"🏆 KAMU MENANG!",
+    lost:"💀 AI MENANG!",
+    needMoney:"💸 Kamu membutuhkan $",
+    upgraded:"ditingkatkan!",
+
+    musicOff:"🔇 Mati",
+    musicCasual:"🌴 Santai",
+    musicNight:"🎻 Musik malam kecil",
+    musicJoy:"🎼 Ode untuk Kegembiraan"
+}
+
+};
+
+
+/* =========================================================
+   LANGUAGE HELPERS
+   ========================================================= */
+
+const languageAliases = {
+    "zh-cn": "zhcn",
+    "zh-tw": "zhTW"
+};
+
+const rtlLanguages = [];
+
+function T(key) {
+
+    const lang =
+        languageAliases[currentLanguage] ||
+        currentLanguage;
+
+    return (
+        translations[lang]?.[key] ??
+        translations.en[key] ??
+        key
+    );
+}
+
+
+/* =========================================================
+   SAVE SYSTEM
+   ========================================================= */
+
+function numberSave(key, fallbackValue) {
+
+    const value = localStorage.getItem(key);
+
+    if (value === null)
+        return fallbackValue;
+
+    const n = Number(value);
+
+    return Number.isFinite(n)
+        ? n
+        : fallbackValue;
+}
+
+
+let money =
+    numberSave("raceMoney", 0);
+
+
+let upgrades = {
+
+    engine:
+        numberSave("raceEngine", 1),
+
+    grip:
+        numberSave("raceGrip", 1),
+
+    nitro:
+        numberSave("raceNitro", 1),
+
+    acceleration:
+        numberSave("raceAcceleration", 1),
+
+    sponsor:
+        numberSave("raceSponsor", 1)
+
+};
+
+
+let difficulty =
+    localStorage.getItem("raceDifficulty") ||
+    "normal";
+
+
+let currentLanguage =
+    localStorage.getItem("raceLanguage") ||
+    "en";
+
+
+if (!translations[languageAliases[currentLanguage] || currentLanguage]) {
+    currentLanguage = "en";
+}
+
+
+let soundVolume =
+    numberSave("raceSound", 100);
+
+
+let selectedMusic =
+    localStorage.getItem("raceMusic") ||
+    "off";
+
+
+soundVolume =
+    Math.max(
+        0,
+        Math.min(100, soundVolume)
+    );
+
+
+/* =========================================================
+   RACE SETTINGS
+   ========================================================= */
+
+const difficulties = {
+
+    easy: {
+        aiSpeed: 5,
+        reward: 50
+    },
+
+    normal: {
+        aiSpeed: 8.5,
+        reward: 100
+    },
+
+    hard: {
+        aiSpeed: 9.75,
+        reward: 175
+    },
+
+    insane: {
+        aiSpeed: 10.75,
+        reward: 375
+    }
+
+};
+
+
+let playerProgress = 0;
+let aiProgress = 0;
+let nitro = 100;
+let racing = false;
+let raceNumber = 1;
+
+
+/* =========================================================
+   AUDIO
+   ========================================================= */
+
+let audioContext = null;
+let musicTimer = null;
+let musicPlaying = false;
+let musicIndex = 0;
+
+
+function getAudio() {
+
+    if (!audioContext) {
+
+        audioContext =
+            new (
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+    }
+
+    if (
+        audioContext.state === "suspended"
+    ) {
+
+        audioContext.resume();
+
+    }
+
+    return audioContext;
+
+}
+
+
+/* =========================================================
+   SOUND EFFECTS
+   ========================================================= */
+
+function beep(
+    frequency,
+    duration,
+    type = "sine",
+    volume = 0.05
+) {
+
+    if (soundVolume <= 0)
+        return;
+
+    const ctx = getAudio();
+
+    const oscillator =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+    oscillator.type = type;
+
+    oscillator.frequency.value =
+        frequency;
+
+    gain.gain.value =
+        volume *
+        (soundVolume / 100);
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        0.001,
+        ctx.currentTime + duration
+    );
+
+    oscillator.stop(
+        ctx.currentTime + duration
+    );
+
+}
+
+
+function playSound(type) {
+
+    if (soundVolume <= 0)
+        return;
+
+    if (type === "click") {
+
+        beep(
+            320,
+            .05,
+            "square",
+            .035
+        );
+
+    }
+
+    else if (type === "drive") {
+
+        beep(
+            150,
+            .07,
+            "sawtooth",
+            .05
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    240,
+                    .06,
+                    "sawtooth",
+                    .04
+                ),
+            65
+        );
+
+    }
+
+    else if (type === "nitro") {
+
+        beep(
+            500,
+            .08,
+            "sawtooth",
+            .05
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    850,
+                    .12,
+                    "sawtooth",
+                    .06
+                ),
+            70
+        );
+
+    }
+
+    else if (type === "upgrade") {
+
+        beep(
+            450,
+            .08,
+            "square",
+            .04
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    650,
+                    .1,
+                    "square",
+                    .045
+                ),
+            90
+        );
+
+    }
+
+    else if (type === "win") {
+
+        beep(
+            523.25,
+            .12,
+            "sine",
+            .06
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    659.25,
+                    .12,
+                    "sine",
+                    .06
+                ),
+            120
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    783.99,
+                    .2,
+                    "sine",
+                    .07
+                ),
+            240
+        );
+
+    }
+
+    else if (type === "lose") {
+
+        beep(
+            220,
+            .15,
+            "sawtooth",
+            .05
+        );
+
+        setTimeout(
+            () =>
+                beep(
+                    150,
+                    .25,
+                    "sawtooth",
+                    .05
+                ),
+            160
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MUSIC
+   ========================================================= */
+
+const NOTE = {
+
+    C4:261.63,
+    D4:293.66,
+    E4:329.63,
+    F4:349.23,
+    G4:392.00,
+    A4:440.00,
+    B4:493.88,
+
+    C5:523.25,
+    D5:587.33,
+    E5:659.25,
+    F5:698.46,
+    G5:783.99,
+    A5:880.00,
+    B5:987.77,
+
+    C6:1046.50
+
+};
+
+
+const casualMelody = [
+
+    [NOTE.C4, .30],
+    [NOTE.E4, .30],
+    [NOTE.G4, .30],
+    [NOTE.A4, .30],
+
+    [NOTE.G4, .30],
+    [NOTE.E4, .30],
+    [NOTE.D4, .30],
+    [NOTE.C4, .45],
+
+    [NOTE.E4, .30],
+    [NOTE.G4, .30],
+    [NOTE.B4, .30],
+    [NOTE.A4, .30],
+
+    [NOTE.G4, .30],
+    [NOTE.E4, .30],
+    [NOTE.C4, .55]
+
+];
+
+
+const nightMelody = [
+
+    [NOTE.G5,.18],
+    [NOTE.G5,.18],
+    [NOTE.G5,.18],
+    [NOTE.D5,.35],
+
+    [NOTE.B4,.18],
+    [NOTE.D5,.18],
+    [NOTE.G5,.18],
+    [NOTE.B5,.35],
+
+    [NOTE.A5,.18],
+    [NOTE.G5,.18],
+    [NOTE.F5,.18],
+    [NOTE.E5,.35],
+
+    [NOTE.D5,.18],
+    [NOTE.G5,.18],
+    [NOTE.B5,.18],
+    [NOTE.G5,.45]
+
+];
+
+
+const joyMelody = [
+
+    [NOTE.E4,.35],
+    [NOTE.E4,.35],
+    [NOTE.F4,.35],
+    [NOTE.G4,.35],
+
+    [NOTE.G4,.35],
+    [NOTE.F4,.35],
+    [NOTE.E4,.35],
+    [NOTE.D4,.35],
+
+    [NOTE.C4,.35],
+    [NOTE.C4,.35],
+    [NOTE.D4,.35],
+    [NOTE.E4,.35],
+
+    [NOTE.E4,.5],
+    [NOTE.D4,.2],
+    [NOTE.D4,.6],
+
+    [NOTE.E4,.35],
+    [NOTE.E4,.35],
+    [NOTE.F4,.35],
+    [NOTE.G4,.35],
+
+    [NOTE.G4,.35],
+    [NOTE.F4,.35],
+    [NOTE.E4,.35],
+    [NOTE.D4,.35],
+
+    [NOTE.C4,.35],
+    [NOTE.C4,.35],
+    [NOTE.D4,.35],
+    [NOTE.E4,.35],
+
+    [NOTE.D4,.5],
+    [NOTE.C4,.2],
+    [NOTE.C4,.6]
+
+];
+
+
+function getMelody() {
+
+    if (selectedMusic === "casual")
+        return casualMelody;
+
+    if (selectedMusic === "night")
+        return nightMelody;
+
+    if (selectedMusic === "joy")
+        return joyMelody;
+
+    return null;
+
+}
+
+
+function musicNote(
+    frequency,
+    duration
+) {
+
+    if (soundVolume <= 0)
+        return;
+
+    const ctx = getAudio();
+
+    const osc =
+        ctx.createOscillator();
+
+    const gain =
+        ctx.createGain();
+
+    osc.type = "triangle";
+
+    osc.frequency.value =
+        frequency;
+
+    gain.gain.value =
+        .025 *
+        (soundVolume / 100);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start();
+
+    gain.gain.exponentialRampToValueAtTime(
+        .001,
+        ctx.currentTime + duration
+    );
+
+    osc.stop(
+        ctx.currentTime + duration
+    );
+
+}
+
+
+function playMusicStep() {
+
+    if (!musicPlaying)
+        return;
+
+    const melody =
+        getMelody();
+
+    if (!melody)
+        return;
+
+    const note =
+        melody[musicIndex];
+
+    musicNote(
+        note[0],
+        note[1]
+    );
+
+    musicIndex++;
+
+    if (
+        musicIndex >=
+        melody.length
+    ) {
+
+        musicIndex = 0;
+
+    }
+
+    musicTimer =
+        setTimeout(
+            playMusicStep,
+            note[1] * 1000
+        );
+
+}
+
+
+function stopMusic() {
+
+    musicPlaying = false;
+    musicIndex = 0;
+
+    if (musicTimer) {
+
+        clearTimeout(
+            musicTimer
+        );
+
+        musicTimer = null;
+
+    }
+
+}
+
+
+function startMusic() {
+
+    stopMusic();
+
+    if (selectedMusic === "off") {
+
+        updateMusicStatus();
+
+        return;
+
+    }
+
+    musicPlaying = true;
+    musicIndex = 0;
+
+    playMusicStep();
+
+    updateMusicStatus();
+
+}
+
+
+function changeMusic(value) {
+
+    selectedMusic = value;
+
+    localStorage.setItem(
+        "raceMusic",
+        selectedMusic
+    );
+
+    startMusic();
+
+    playSound("click");
+
+}
+
+
+function updateMusicStatus() {
+
+    const keys = {
+
+        off:"musicOff",
+        casual:"musicCasual",
+        night:"musicNight",
+        joy:"musicJoy"
+
+    };
+
+    document.getElementById(
+        "musicStatus"
+    ).textContent =
+        T(keys[selectedMusic] || "musicOff");
+
+}
+
+
+/* =========================================================
+   UI
+   ========================================================= */
+
+function updateUI() {
+
+    document.getElementById(
+        "money"
+    ).textContent =
+        "💰 $" + money;
+
+
+    const speed =
+        10 +
+        upgrades.engine * .85;
+
+
+    document.getElementById(
+        "speedText"
+    ).textContent =
+        speed.toFixed(1);
+
+
+    document.getElementById(
+        "gripText"
+    ).textContent =
+        upgrades.grip;
+
+
+    document.getElementById(
+        "accelText"
+    ).textContent =
+        upgrades.acceleration;
+
+
+    document.getElementById(
+        "nitroBar"
+    ).style.width =
+        nitro + "%";
+
+
+    document.getElementById(
+        "engineInfo"
+    ).textContent =
+        "$" +
+        upgrades.engine * 100;
+
+
+    document.getElementById(
+        "gripInfo"
+    ).textContent =
+        "$" +
+        upgrades.grip * 150;
+
+
+    document.getElementById(
+        "nitroInfo"
+    ).textContent =
+        "$" +
+        upgrades.nitro * 200;
+
+
+    document.getElementById(
+        "accelInfo"
+    ).textContent =
+        "$" +
+        upgrades.acceleration * 175;
+
+
+    document.getElementById(
+        "sponsorInfo"
+    ).textContent =
+        "$" +
+        upgrades.sponsor * 250;
+
+
+    document.getElementById(
+        "soundText"
+    ).textContent =
+        soundVolume + "%";
+
+
+    document.getElementById(
+        "language"
+    ).value =
+        currentLanguage;
+
+
+    document.getElementById(
+        "musicSelect"
+    ).value =
+        selectedMusic;
+
+
+    updateMusicStatus();
+
+}
+
+
+/* =========================================================
+   LANGUAGE SYSTEM
+   ========================================================= */
+
+function applyLanguage() {
+
+    const realLanguage =
+        languageAliases[currentLanguage] ||
+        currentLanguage;
+
+
+    document.documentElement.lang =
+        currentLanguage;
+
+
+    document.documentElement.dir =
+        rtlLanguages.includes(currentLanguage)
+            ? "rtl"
+            : "ltr";
+
+
+    document
+        .querySelectorAll("[data-i18n]")
+        .forEach(function(element) {
+
+            const key =
+                element.dataset.i18n;
+
+            element.textContent =
+                T(key);
+
+        });
+
+
+    updateDifficultyText();
+
+
+    if (!racing) {
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("choose");
+
+    }
+
+
+    updateMusicStatus();
+
+}
+
+
+function changeLanguage(language) {
+
+    if (!translations[
+        languageAliases[language] ||
+        language
+    ]) {
+
+        language = "en";
+
+    }
+
+
+    currentLanguage =
+        language;
+
+
+    localStorage.setItem(
+        "raceLanguage",
+        currentLanguage
+    );
+
+
+    applyLanguage();
+
+    playSound("click");
+
+}
+
+
+/* =========================================================
+   DIFFICULTY
+   ========================================================= */
+
+function updateDifficultyText() {
+
+    document.getElementById(
+        "difficultyText"
+    ).textContent =
+        T("difficulty") +
+        ": " +
+        T(difficulty);
+
+}
+
+
+function setDifficulty(
+    level,
+    button
+) {
+
+    difficulty = level;
+
+
+    document
+        .querySelectorAll(
+            ".difficulties button"
+        )
+        .forEach(function(btn) {
+
+            btn.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+    button.classList.add(
+        "selected"
+    );
+
+
+    localStorage.setItem(
+        "raceDifficulty",
+        difficulty
+    );
+
+
+    updateDifficultyText();
+
+    resetRace();
+
+    playSound("click");
+
+}
+
+
+/* =========================================================
+   SAVE
+   ========================================================= */
+
+function saveProgress() {
+
+    localStorage.setItem(
+        "raceMoney",
+        money
+    );
+
+    localStorage.setItem(
+        "raceEngine",
+        upgrades.engine
+    );
+
+    localStorage.setItem(
+        "raceGrip",
+        upgrades.grip
+    );
+
+    localStorage.setItem(
+        "raceNitro",
+        upgrades.nitro
+    );
+
+    localStorage.setItem(
+        "raceAcceleration",
+        upgrades.acceleration
+    );
+
+    localStorage.setItem(
+        "raceSponsor",
+        upgrades.sponsor
+    );
+
+    localStorage.setItem(
+        "raceSound",
+        soundVolume
+    );
+
+    localStorage.setItem(
+        "raceDifficulty",
+        difficulty
+    );
+
+    localStorage.setItem(
+        "raceLanguage",
+        currentLanguage
+    );
+
+    localStorage.setItem(
+        "raceMusic",
+        selectedMusic
+    );
+
+}
+
+
+function manualSave() {
+
+    saveProgress();
+
+    playSound("click");
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        T("saved");
+
+}
+
+
+/* =========================================================
+   RESET SAVE
+   ========================================================= */
+
+function resetProgress() {
+
+    if (
+        !confirm(
+            "Reset ALL RACE//MONEY progress?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const keys = [
+
+        "raceMoney",
+        "raceEngine",
+        "raceGrip",
+        "raceNitro",
+        "raceAcceleration",
+        "raceSponsor",
+        "raceSound",
+        "raceDifficulty",
+        "raceLanguage",
+        "raceMusic"
+
+    ];
+
+
+    keys.forEach(function(key) {
+
+        localStorage.removeItem(key);
+
+    });
+
+
+    money = 0;
+
+
+    upgrades = {
+
+        engine:1,
+        grip:1,
+        nitro:1,
+        acceleration:1,
+        sponsor:1
+
+    };
+
+
+    difficulty = "normal";
+    currentLanguage = "en";
+    soundVolume = 100;
+    selectedMusic = "off";
+
+
+    stopMusic();
+
+    resetRace();
+
+
+    document
+        .querySelectorAll(
+            ".difficulties button"
+        )
+        .forEach(function(btn) {
+
+            btn.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+    document.getElementById(
+        "normalBtn"
+    ).classList.add(
+        "selected"
+    );
+
+
+    updateUI();
+
+    applyLanguage();
+
+    playSound("click");
+
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        T("resetMsg");
+
+}
+
+
+/* =========================================================
+   NORMAL DRIVE DISTANCE
+   ========================================================= */
+
+function getNormalDriveDistance() {
+
+    const baseSpeed =
+        4.5 +
+        upgrades.engine * .42;
+
+
+    const accelerationBonus =
+        upgrades.acceleration * .30;
+
+
+    const randomRange =
+        Math.max(
+            .8,
+            1.4 -
+            upgrades.grip * .055
+        );
+
+
+    const randomMovement =
+        Math.random() *
+        randomRange;
+
+
+    return (
+        baseSpeed +
+        accelerationBonus +
+        randomMovement
+    );
+
+}
+
+
+/* =========================================================
+   DRIVE
+   ========================================================= */
+
+function drive() {
+
+    if (!racing) {
+
+        racing = true;
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("go");
+
+
+        if (
+            selectedMusic !== "off" &&
+            !musicPlaying
+        ) {
+
+            startMusic();
+
+        }
+
+    }
+
+
+    playSound("drive");
+
+
+    playerProgress +=
+        getNormalDriveDistance();
+
+
+    updateCars();
+
+    updateUI();
+
+    checkWinner();
+
+}
+
+
+/* =========================================================
+   AI
+   ========================================================= */
+
+setInterval(function() {
+
+    if (!racing)
+        return;
+
+
+    const ai =
+        difficulties[difficulty];
+
+
+    const variation =
+        (Math.random() - .5) * .75;
+
+
+    aiProgress +=
+        ai.aiSpeed +
+        variation;
+
+
+    if (aiProgress < 0)
+        aiProgress = 0;
+
+
+    updateCars();
+
+    checkWinner();
+
+}, 300);
+
+
+/* =========================================================
+   NITRO
+   ========================================================= */
+
+function useNitro() {
+
+    if (!racing) {
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("startFirst");
+
+        return;
+
+    }
+
+
+    if (nitro < 20) {
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("noNitro");
+
+        return;
+
+    }
+
+
+    /*
+        Nitro is exactly 1.25x
+        the distance of a normal drive.
+    */
+
+    const normalDistance =
+        getNormalDriveDistance();
+
+
+    const boost =
+        normalDistance * 1.25;
+
+
+    playerProgress +=
+        boost;
+
+
+    nitro -= 20;
+
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        T("nitroMsg") +
+        " +" +
+        boost.toFixed(1) +
+        "%";
+
+
+    playSound("nitro");
+
+    updateCars();
+    updateUI();
+    checkWinner();
+
+}
+
+
+/* =========================================================
+   CARS
+   ========================================================= */
+
+function updateCars() {
+
+    const track =
+        document.querySelector(
+            ".track"
+        );
+
+
+    const maxPosition =
+        track.clientWidth - 100;
+
+
+    const playerX =
+        Math.min(
+            playerProgress / 100 *
+            maxPosition,
+            maxPosition
+        );
+
+
+    const aiX =
+        Math.min(
+            aiProgress / 100 *
+            maxPosition,
+            maxPosition
+        );
+
+
+    document.getElementById(
+        "playerCar"
+    ).style.left =
+        playerX + "px";
+
+
+    document.getElementById(
+        "aiCar"
+    ).style.left =
+        aiX + "px";
+
+}
+
+
+/* =========================================================
+   WINNER
+   ========================================================= */
+
+function checkWinner() {
+
+    if (
+        playerProgress >= 100
+    ) {
+
+        finishRace(true);
+
+    }
+
+    else if (
+        aiProgress >= 100
+    ) {
+
+        finishRace(false);
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH
+   ========================================================= */
+
+function finishRace(playerWon) {
+
+    if (!racing)
+        return;
+
+
+    racing = false;
+
+
+    if (playerWon) {
+
+        const baseReward =
+            difficulties[difficulty]
+                .reward;
+
+
+        const sponsorBonus =
+            Math.floor(
+                baseReward *
+                (upgrades.sponsor - 1) *
+                .018
+            );
+
+
+        const reward =
+            baseReward +
+            sponsorBonus;
+
+
+        money += reward;
+
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("won") +
+            " +$" +
+            reward;
+
+
+        playSound("win");
+
+        saveProgress();
+
+    }
+
+    else {
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("lost");
+
+
+        playSound("lose");
+
+    }
+
+
+    setTimeout(function() {
+
+        raceNumber++;
+
+        resetRace();
+
+    }, 1800);
+
+}
+
+
+/* =========================================================
+   RESET RACE
+   ========================================================= */
+
+function resetRace() {
+
+    playerProgress = 0;
+    aiProgress = 0;
+    nitro = 100;
+    racing = false;
+
+
+    document.getElementById(
+        "playerCar"
+    ).style.left =
+        "10px";
+
+
+    document.getElementById(
+        "aiCar"
+    ).style.left =
+        "10px";
+
+
+    updateUI();
+
+}
+
+
+/* =========================================================
+   UPGRADES
+   ========================================================= */
+
+function upgrade(type) {
+
+    let cost;
+
+
+    if (type === "engine")
+        cost = upgrades.engine * 100;
+
+    else if (type === "grip")
+        cost = upgrades.grip * 150;
+
+    else if (type === "nitro")
+        cost = upgrades.nitro * 200;
+
+    else if (type === "acceleration")
+        cost = upgrades.acceleration * 175;
+
+    else if (type === "sponsor")
+        cost = upgrades.sponsor * 250;
+
+
+    if (money < cost) {
+
+        document.getElementById(
+            "message"
+        ).textContent =
+            T("needMoney") +
+            (cost - money);
+
+        return;
+
+    }
+
+
+    money -= cost;
+
+    upgrades[type]++;
+
+
+    const names = {
+
+        engine:"🚀 " + T("engine"),
+        grip:"🛞 " + T("grip"),
+        nitro:"⚡ " + T("nitroBoost"),
+        acceleration:"💨 " + T("acceleration"),
+        sponsor:"🪙 " + T("sponsor")
+
+    };
+
+
+    document.getElementById(
+        "message"
+    ).textContent =
+        names[type] +
+        " " +
+        T("upgraded");
+
+
+    playSound("upgrade");
+
+    saveProgress();
+
+    updateUI();
+
+}
+
+
+/* =========================================================
+   VOLUME
+   ========================================================= */
+
+function changeVolume(amount) {
+
+    soundVolume += amount;
+
+
+    soundVolume =
+        Math.max(
+            0,
+            Math.min(
+                100,
+                soundVolume
+            )
+        );
+
+
+    localStorage.setItem(
+        "raceSound",
+        soundVolume
+    );
+
+
+    updateUI();
+
+
+    if (soundVolume > 0)
+        playSound("click");
+
+}
+
+
+/* =========================================================
+   LOAD
+   ========================================================= */
+
+function loadSettings() {
+
+    document.getElementById(
+        "language"
+    ).value =
+        currentLanguage;
+
+
+    document.getElementById(
+        "musicSelect"
+    ).value =
+        selectedMusic;
+
+
+    document
+        .querySelectorAll(
+            ".difficulties button"
+        )
+        .forEach(function(btn) {
+
+            btn.classList.remove(
+                "selected"
+            );
+
+        });
+
+
+    const selectedButton =
+        document.getElementById(
+            difficulty + "Btn"
+        );
+
+
+    if (selectedButton) {
+
+        selectedButton.classList.add(
+            "selected"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   STARTUP
+   ========================================================= */
+
+loadSettings();
+
+updateUI();
+
+applyLanguage();
+
+updateDifficultyText();
+
+</script>
+
+</body>
+</html>
